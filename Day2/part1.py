@@ -1,27 +1,24 @@
 import re
 
+max_balls = {
+    'red': 12,
+    'blue': 14,
+    'green': 13
+}
+
 pattern = re.compile(r'(\d+\s\w+,\s\d+\s\w+,\s\d+\s\w+|\d+\s\w+,\s\d+\s\w+|\d+\s\w+)')
 
 
-def get_max_balls(input_str):
+def valid_game(input_str):
     all_turns = pattern.findall(input_str)
-
-    max_balls = [0, 0, 0]
 
     for turn in all_turns:
         all_balls = turn.split(', ')
         for ball in all_balls:
-            [amount_in_str, color] = ball.split(' ')
-            amount = int(amount_in_str)
-            if color == 'red' and max_balls[0] < amount:
-                max_balls[0] = amount
-            elif color == 'blue' and max_balls[1] < amount:
-                max_balls[1] = amount
-            elif color == 'green' and max_balls[2] < amount:
-                max_balls[2] = amount
-
-    print(max_balls)
-    return max_balls
+            [amount, color] = ball.split(' ')
+            if max_balls[color] < int(amount):
+                return False
+    return True
 
 
 # valid_game('Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green')
@@ -32,10 +29,11 @@ def get_max_balls(input_str):
 
 
 answer = 0
+idx = 1
 with open('puzzle.txt', 'r') as file:
     for line in file:
-        max_balls = get_max_balls(line)
-        answer += (max_balls[0] * max_balls[1] * max_balls[2])
-
+        if valid_game(line):
+            answer += idx
+        idx += 1
 
 print(answer)
